@@ -9,7 +9,6 @@ RUN npm install
 # Копіюємо решту файлів фронтенду
 COPY frontend/vite.config.js ./
 COPY frontend/index.html ./
-COPY frontend/public/ ./public/
 COPY frontend/src/ ./src/
 
 RUN npm run build
