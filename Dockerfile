@@ -1,11 +1,12 @@
 # --- Етап 1: Збірка React Фронтенду ---
 FROM node:20-alpine AS frontend-builder
 WORKDIR /app/frontend
-COPY frontend/package*.json ./
+# Змінено шляхи копіювання:
+COPY package*.json ./
 RUN npm install
-COPY frontend/ ./
+COPY src/ ./src/
+COPY public/ ./public/
 RUN npm run build
-
 # --- Етап 2: Фінальний образ з Node.js сервером ---
 FROM node:20-alpine
 WORKDIR /app
