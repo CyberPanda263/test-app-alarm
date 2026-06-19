@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
+import alarmSound from './assets/audio/alarm.mp3';
 
 // Автоматичне визначення хоста для роботи в будь-якому оточенні k8s
 const API_BASE = window.location.origin;
@@ -19,7 +20,7 @@ function App() {
   const [loginError, setLoginError] = useState('');
 
   const ws = useRef(null);
-  const audioRef = useRef(new Audio('/audio/alarm.mp3'));
+  const audioRef = useRef(new Audio(alarmSound));
 
   useEffect(() => {
     // Підключення клієнтів по WSS
