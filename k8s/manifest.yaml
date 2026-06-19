@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gena-alarm-system
+  namespace: default
+  labels:
+    app: gena-alarm-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gena-alarm-system
+  template:
+    metadata:
+      labels:
+        app: gena-alarm-system
+    spec:
+      containers:
+      - name: alarm-app
+        image: gena-alarm-system:latest # Пайплайн Tekton автоматично оновить цей тег
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        env:
+        - name: PORT
+          value: "8080"
+        - name: ADMIN_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: alarm-system-secrets
+              key: admin-username
+        - name: ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: alarm-system-secrets
+              key: admin-password
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: alarm-system-secrets
+              key: jwt-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gena-alarm-system-svc
+  namespace: default
+spec:
+  selector:
+    app: gena-alarm-system
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: alarm-system-secrets
+  namespace: default
+type: Opaque
+stringData:
+  admin-username: "admin"
+  admin-password: "Qweasd!23"
+  jwt-secret: "OJFONEGONidhigdwningiwenVOVNJNWNONONDSGOWNE"
