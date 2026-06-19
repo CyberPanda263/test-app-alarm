@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
-import alarmSound from './assets/audio/alarm.mp3';
+import alarmSound from './public/audio/alarm.mp3';
 
 // Автоматичне визначення хоста для роботи в будь-якому оточенні k8s
 const API_BASE = window.location.origin;
