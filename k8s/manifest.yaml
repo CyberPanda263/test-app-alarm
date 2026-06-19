@@ -79,7 +79,7 @@ spec:
       containers:
       - name: alarm-container
         # Використовуємо твій локальний реєстр:
-        image: registry.registry.svc.cluster.local:5000/test-app-alarm:build-run-e9331
+        image: registry.registry.svc.cluster.local:5000/test-app-alarm:build-run-e53c5
         imagePullPolicy: IfNotPresent
         ports: 
           - containerPort: 8080
