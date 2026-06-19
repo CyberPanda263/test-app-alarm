@@ -43,15 +43,26 @@ function App() {
     };
   }, []);
 
-  // Керування звуком залежно від взаємодії та стану тривоги
+  // ВИПРАВЛЕНО: Керування звуком залежно від взаємодії та стану тривоги
   useEffect(() => {
-    audioRef.current.loop = true;
+    const audio = audioRef.current;
+    audio.loop = true;
+
     if (isAlarmActive && hasInteracted) {
-      audioRef.current.play().catch(e => console.error("Браузер заблокував звук:", e));
+      // Якщо є взаємодія і тривога активна - граємо звук
+      audio.play().catch(e => {
+        console.error("Браузер заблокував звук. Причина:", e.message);
+      });
     } else {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
+      // Якщо тривоги немає або користувач ще не натиснув кнопку - зупиняємо
+      audio.pause();
+      audio.currentTime = 0;
     }
+
+    // Правило хорошого тону в React: зупиняти аудіо при розмонтуванні компонента
+    return () => {
+      audio.pause();
+    };
   }, [isAlarmActive, hasInteracted]);
 
   // Обробка входу адміна (HTTP POST)

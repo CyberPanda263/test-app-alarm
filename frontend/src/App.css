@@ -1,55 +1,264 @@
+/* =========================================
+   Глобальні стилі контейнера та фону
+========================================= */
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  transition: background-color 0.5s ease;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Спокійний стан системи */
+.calm {
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  color: #166534;
+}
+
+/* Стан тривоги (блимання) */
+.flash-red {
+  background-color: #fef2f2;
+  color: #991b1b;
+  animation: pulse-red 2s infinite;
+}
+
+@keyframes pulse-red {
+  0% { background-color: #fef2f2; }
+  50% { background-color: #fecaca; }
+  100% { background-color: #fef2f2; }
+}
+
+/* =========================================
+   Шапка та Панель Адміністратора
+========================================= */
 .header-zone {
   position: absolute;
-  top: 15px;
-  right: 15px;
-  left: 15px;
+  top: 20px;
+  right: 20px;
+  left: 20px;
   display: flex;
   justify-content: flex-end;
   z-index: 900;
 }
-.sub-btn, .logout-btn, .action-btn {
-  padding: 8px 14px;
-  border-radius: 6px;
-  border: none;
-  font-weight: bold;
-  cursor: pointer;
-}
-.sub-btn { background: #4a5568; color: white; }
-.logout-btn { background: #e53e3e; color: white; margin-left: 8px; }
-.action-btn { background: #ecc94b; color: #1a202c; }
 
+.admin-controls-badge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  padding: 8px 12px 8px 20px;
+  border-radius: 50px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.badge {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #059669;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* =========================================
+   Стилі кнопок
+========================================= */
+.sub-btn, .logout-btn, .action-btn, .btn-submit, .btn-cancel, .init-btn {
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.sub-btn { 
+  background: #374151; 
+  color: white; 
+}
+.sub-btn:hover { 
+  background: #4b5563; 
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.logout-btn { 
+  background: #fee2e2; 
+  color: #dc2626; 
+}
+.logout-btn:hover { 
+  background: #fecaca; 
+  color: #b91c1c;
+}
+
+.action-btn { 
+  background: #ef4444; 
+  color: white;
+  border-radius: 20px; /* Більш кругла для виділення */
+}
+.action-btn:hover { 
+  background: #dc2626; 
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+/* =========================================
+   Основний контент клієнта
+========================================= */
+.interaction-prompt, .client-content {
+  text-align: center;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 40px 60px;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(10px);
+  max-width: 600px;
+  width: 90%;
+}
+
+.interaction-prompt h2 {
+  margin-top: 0;
+  color: #1f2937;
+}
+
+.interaction-prompt p {
+  color: #4b5563;
+  margin-bottom: 25px;
+}
+
+.init-btn {
+  background: #2563eb;
+  color: white;
+  font-size: 1.1rem;
+  padding: 12px 30px;
+}
+.init-btn:hover {
+  background: #1d4ed8;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(37, 99, 235, 0.3);
+}
+
+.status-title {
+  font-size: 2rem;
+  margin: 0;
+  font-weight: 800;
+}
+
+.toast {
+  margin-top: 20px;
+  background: #ef4444;
+  color: white;
+  padding: 15px 20px;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 1.2rem;
+  animation: slide-up 0.4s ease-out;
+}
+
+/* =========================================
+   Модальне вікно (Логін)
+========================================= */
 .modal-overlay {
   position: fixed;
-  top:0; left:0; right:0; bottom:0;
-  background: rgba(0,0,0,0.7);
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(15, 23, 42, 0.5); /* Темний з напівпрозорістю */
+  backdrop-filter: blur(6px); /* Розмиття фону */
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 2000;
   padding: 15px;
+  animation: fade-in 0.2s ease-out;
 }
+
 .modal-content {
-  background: white;
-  padding: 24px;
-  border-radius: 12px;
+  background: #ffffff;
+  padding: 32px;
+  border-radius: 16px;
   width: 100%;
-  max-width: 360px;
-  color: #333;
+  max-width: 380px;
+  color: #1f2937;
   text-align: left;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  animation: scale-up 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
+
+.modal-content h3 {
+  margin-top: 0;
+  margin-bottom: 24px;
+  font-size: 1.4rem;
+  color: #111827;
+}
+
 .modal-content input {
   width: 100%;
-  padding: 12px;
-  margin: 8px 0;
-  border: 1px solid #cbd5e0;
-  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 8px 0 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.2s;
+  box-sizing: border-box; /* Важливо для width 100% */
 }
+
+.modal-content input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.error-text { 
+  color: #ef4444; 
+  font-size: 0.85rem; 
+  margin-top: -8px; 
+  margin-bottom: 12px; 
+  font-weight: 500;
+}
+
 .modal-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
-  margin-top: 15px;
+  gap: 12px;
+  margin-top: 20px;
 }
-.btn-submit { background: #3182ce; color: white; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; }
-.btn-cancel { background: #edf2f7; color: #4a5568; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; }
-.error-text { color: #e53e3e; font-size: 0.9rem; margin: 4px 0; }
+
+.btn-submit { 
+  background: #2563eb; 
+  color: white; 
+}
+.btn-submit:hover { 
+  background: #1d4ed8; 
+}
+
+.btn-cancel { 
+  background: #f3f4f6; 
+  color: #4b5563; 
+}
+.btn-cancel:hover { 
+  background: #e5e7eb; 
+}
+
+/* =========================================
+   Анімації
+========================================= */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scale-up {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
