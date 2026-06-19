@@ -1,66 +1,103 @@
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: gena-alarm-system
-  namespace: default
-  labels:
-    app: gena-alarm-system
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: gena-alarm-system
-  template:
-    metadata:
-      labels:
-        app: gena-alarm-system
-    spec:
-      containers:
-      - name: alarm-app
-        image: gena-alarm-system:latest # Пайплайн Tekton автоматично оновить цей тег
-        imagePullPolicy: IfNotPresent
-        ports:
-        - containerPort: 8080
-        env:
-        - name: PORT
-          value: "8080"
-        - name: ADMIN_USERNAME
-          valueFrom:
-            secretKeyRef:
-              name: alarm-system-secrets
-              key: admin-username
-        - name: ADMIN_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: alarm-system-secrets
-              key: admin-password
-        - name: JWT_SECRET
-          valueFrom:
-            secretKeyRef:
-              name: alarm-system-secrets
-              key: jwt-secret
----
 apiVersion: v1
-kind: Service
+kind: Namespace
 metadata:
-  name: gena-alarm-system-svc
-  namespace: default
-spec:
-  selector:
-    app: gena-alarm-system
-  ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 8080
-  type: ClusterIP
+  name: test-app-alarm
+  annotations:
+    argocd.argoproj.io/sync-wave: "-5"
 ---
 apiVersion: v1
 kind: Secret
 metadata:
-  name: alarm-system-secrets
-  namespace: default
+  name: alarm-secret
+  namespace: test-app-alarm
+  annotations:
+    argocd.argoproj.io/sync-wave: "-2"
 type: Opaque
 stringData:
-  admin-username: "admin"
-  admin-password: "Qweasd!23"
-  jwt-secret: "OJFONEGONidhigdwningiwenVOVNJNWNONONDSGOWNE"
+  ADMIN_USERNAME: "admin"
+  ADMIN_PASSWORD: "SuperSecurePassword123!"
+  JWT_SECRET: "random_jwt_signature_key_here"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: alarm-service
+  namespace: test-app-alarm
+  annotations:
+    argocd.argoproj.io/sync-wave: "0" 
+spec:
+  selector: 
+    app: alarm-app
+  ports: 
+    - port: 80
+      targetPort: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: alarm-ingress
+  namespace: test-app-alarm
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+    argocd.argoproj.io/compare-options: IgnoreExtraneous
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    # Для WebSockets (wss://) Nginx зазвичай налаштовується автоматично, 
+    # але ці таймаути допоможуть тримати з'єднання активним довше:
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: alarm.binaro.uno
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: alarm-service
+            port:
+              number: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alarm-deployment
+  namespace: test-app-alarm
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  replicas: 1
+  selector: 
+    matchLabels: 
+      app: alarm-app
+  template:
+    metadata: 
+      labels: 
+        app: alarm-app
+    spec:
+      containers:
+      - name: alarm-container
+        # Використовуємо твій локальний реєстр:
+        image: registry.registry.svc.cluster.local:5000/test-app-alarm:latest
+        imagePullPolicy: IfNotPresent
+        ports: 
+          - containerPort: 8080
+        env:
+        - name: PORT
+          value: "8080"
+        - name: ADMIN_USERNAME
+          valueFrom: 
+            secretKeyRef: 
+              name: alarm-secret
+              key: ADMIN_USERNAME
+        - name: ADMIN_PASSWORD
+          valueFrom: 
+            secretKeyRef: 
+              name: alarm-secret
+              key: ADMIN_PASSWORD
+        - name: JWT_SECRET
+          valueFrom: 
+            secretKeyRef: 
+              name: alarm-secret
+              key: JWT_SECRET

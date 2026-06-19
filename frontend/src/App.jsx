@@ -19,7 +19,7 @@ function App() {
   const [loginError, setLoginError] = useState('');
 
   const ws = useRef(null);
-  const audioRef = useRef(new Audio('../audio/alarm.mp3'));
+  const audioRef = useRef(new Audio('/audio/alarm.mp3'));
 
   useEffect(() => {
     // Підключення клієнтів по WSS
