@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
-import alarmSound from './public/audio/alarm.mp3';
+
+// Правильний імпорт файлу з папки src/assets
+import alarmSound from './assets/audio/alarm.mp3';
 
 // Автоматичне визначення хоста для роботи в будь-якому оточенні k8s
 const API_BASE = window.location.origin;
@@ -20,6 +22,8 @@ function App() {
   const [loginError, setLoginError] = useState('');
 
   const ws = useRef(null);
+  
+  // Використовуємо імпортовану змінну для гарантованого доступу до файлу
   const audioRef = useRef(new Audio(alarmSound));
 
   useEffect(() => {
@@ -44,7 +48,7 @@ function App() {
     };
   }, []);
 
-  // ВИПРАВЛЕНО: Керування звуком залежно від взаємодії та стану тривоги
+  // Керування звуком залежно від взаємодії та стану тривоги
   useEffect(() => {
     const audio = audioRef.current;
     audio.loop = true;
